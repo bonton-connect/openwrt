@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+make distclean
+./scripts/feeds update -a
+./scripts/feeds update -i -f
+./scripts/feeds install -a -f
+
+rm .config
+cp bonton-config.tpl-archerc6v3 .config
+rm -rf ./files
+cp -r ./files.tpl-archerc6v3 ./files
+
+make -j $(($(nproc)-4)) defconfig download clean world
