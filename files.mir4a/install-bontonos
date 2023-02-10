@@ -1,0 +1,43 @@
+#!/bin/sh
+
+if [[ -f /tmp/.bontonos-installer-running ]]; then
+  echo "ALREADY RUNNING"
+  exit 0
+fi
+
+touch /tmp/.bontonos-installer-running
+
+function default_lights {
+  echo "heartbeat" > /sys/class/leds/yellow:power/trigger
+  echo "none" > /sys/class/leds/blue:power/trigger
+}
+
+function success_lights {
+  echo "none" > /sys/class/leds/yellow:power/trigger
+  echo "default-on" > /sys/class/leds/blue:power/trigger
+}
+
+function running_lights {
+  echo "timer" > /sys/class/leds/blue:power/trigger
+  echo "none" > /sys/class/leds/yellow:power/trigger
+}
+
+running_lights
+
+cd /tmp && (
+  set -o pipefail
+
+
+  /bin/uclient-fetch https://install.os.bonton.app/auto-installer.sh -O - | /bin/sh
+
+  if [[ $? -eq 0 ]]; then
+    echo "SUCCESSFUL INSTALL"
+    rm /etc/rc.d/S99z-set-installer-leds
+    success_lights
+  else
+    echo "INSTALL FAILED"
+    default_lights
+  fi
+)
+
+rm -f /tmp/.bontonos-installer-running

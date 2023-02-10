@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+make distclean
+./scripts/feeds update -a
+./scripts/feeds install -a
+
+rm .config
+cp bonton-config.mir4a .config
+rm -rf ./files
+cp -r ./files.mir4a ./files
+
+make -j $(($(nproc)-2)) defconfig download clean world

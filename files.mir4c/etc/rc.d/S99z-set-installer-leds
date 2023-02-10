@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "heartbeat" > /sys/class/leds/yellow:power/trigger
+echo "none" > /sys/class/leds/blue:power/trigger
+

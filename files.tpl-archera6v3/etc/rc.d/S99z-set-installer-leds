@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "heartbeat" > /sys/class/leds/green:power/trigger
+
+
